@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TaskPaneApp">
   <Id>47f8b2a4-0e2a-4b5a-a011-b5253efdf14e</Id>
   <Version>1.0.0.1</Version>
@@ -8,9 +8,9 @@
   <Description DefaultValue="Excel JSOM Test - Taskpane"></Description>
   <IconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconNormal.png"></IconUrl>
   <HighResolutionIconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconHigh.png" />
-  <Capabilities>
-    <Capability Name="Workbook"></Capability>
-  </Capabilities>
+  <Hosts>
+    <Host Name="Workbook"></Host>
+  </Hosts>
   <DefaultSettings>
     <SourceLocation DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/JSOMTest.html"></SourceLocation>
   </DefaultSettings>
