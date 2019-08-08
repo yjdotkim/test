@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<head>
+  <title>JSOM Test Page</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+  <script type="text/javascript" src="./MicrosoftAjax.js"></script>
+  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+  <script type="text/javascript" src="./JSOMTest.js"></script>
+</head>
 
+<body>
+  <h3>Excel JSOM Test Page</h3>
+  <p>
+      <div class="heading"><b>Bindings</b></div>
+      <div>
+          <label>Binding Type</label>
+
+          <input type="radio" name="bindingType" id="bindingText" onchange='_bindingType=Microsoft.Office.WebExtension.BindingType.Text'/>
+          <label for="bindingText">Text</label>
+
+          <input type="radio" name="bindingType" id="bindingMatrix" onchange='_bindingType=Microsoft.Office.WebExtension.BindingType.Matrix'/>
+          <label for="bindingMatrix">Matrix</label>
+
+          <input type="radio" name="bindingType" id="bindingTable" onchange='_bindingType=Microsoft.Office.WebExtension.BindingType.Table'/>
+          <label for="bindingTable">Table</label>
+
+          <p />
+          <label for="bindingId">Binding Id</label>
+          <input type="text" id="bindingId"/>
+      </div>
+      <input id="bindToSelection" type="button" onclick="javascript:addBinding()" value="Add a binding to selection"/>
+      <input id="removeBinding" type="button" onclick="javascript:removeBinding()" value="Remove the binding"/>
+      <p />
+      <input id="getBindingsCount" type="button" onclick="javascript:getBindingsCount()" value="Bindings count"/>
+      <input id="getBindingsInfo" type="button" onclick="javascript:getBindingsInfo()" value="Bindings info"/>
+  </p>
+
+  <br />
+  <p>
+    <div class="heading"><b>Settings</b></div>
+    <input id="setSettingsId" type="button" onclick="javascript:setSettings()" value="Set settings"/>
+    <input id="getSettingsId" type="button" onclick="javascript:getSettings()" value="Get settings"/>
+    <input id="saveSettingsId" type="button"  onclick="javascript:saveSettings()" value="Save settings"/>
+    <input id="refreshSettingsId" type="button"  onclick="javascript:refreshSettings()" value="Refresh settings"/>
+    <input id="removeSettingsId" type="button"  onclick="javascript:removeSettings()" value="Remove settings"/>
+  </p>
+
+  <br />
+  <p>
+    <div class="heading"><b>Output</b></div>
+    <textarea rows="5" cols="80" id="output"></textarea>
+  </p>
+  <p>
+    <div class="heading"><b>Logs</b></div>
+    <textarea rows="10" cols="80" id="logs"></textarea>
+  </p>
+
+</body>
+</html>
