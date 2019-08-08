@@ -8,13 +8,17 @@
   <Description DefaultValue="Excel JSOM Test - Taskpane"></Description>
   <IconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconNormal.png"></IconUrl>
   <HighResolutionIconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconHigh.png" />
+  <SupportUrl DefaultValue="https://github.com/yjdotkim/test" />
   <Hosts>
     <Host Name="Workbook"></Host>
   </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="ExcelApi" MinVersion="1.4"/>
+    </Sets>
+  </Requirements>
   <DefaultSettings>
     <SourceLocation DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/JSOMTest.html"></SourceLocation>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
-  <!--Allowed snapshot can be true or false for InContent Agaves only-->
-  <AllowSnapshot>true</AllowSnapshot>
 </OfficeApp>
