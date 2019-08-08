@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ContentApp">
+  <Id>8e80cea6-baa3-4d2e-9fd1-54d216bd608a</Id>
+  <Version>1.0.0.1</Version>
+  <ProviderName>Office Concierge</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Excel JSOM Test - Content"></DisplayName>
+  <Description DefaultValue="Excel JSOM Test - Content"></Description>
+  <IconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconNormal.png"></IconUrl>
+  <HighResolutionIconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconHigh.png" />
+  <Capabilities>
+    <Capability Name="Workbook"></Capability>
+  </Capabilities>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/JSOMTest.html"></SourceLocation>
+    <!--Only Incontent MOE can have both width and height-->
+    <RequestedWidth>800</RequestedWidth>
+    <RequestedHeight>800</RequestedHeight>
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+  <!--Allowed snapshot can be true or false for InContent Agaves only-->
+  <AllowSnapshot>true</AllowSnapshot>
+</OfficeApp>
