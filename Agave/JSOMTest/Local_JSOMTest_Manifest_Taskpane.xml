@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>e55a33d2-60b6-4f65-9c2d-4e0980240b30</Id>
-  <Version>1.0.0.1</Version>
-  <ProviderName>Microsoft</ProviderName>
+  <Version>1.0.0.2/Version>
+  <ProviderName>Office Concierge</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="(Local) Excel JSOM Test - Taskpane"></DisplayName>
   <Description DefaultValue="(Local) Excel JSOM Test - Taskpane"></Description>

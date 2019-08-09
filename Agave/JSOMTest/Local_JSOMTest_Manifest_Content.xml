@@ -2,7 +2,7 @@
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ContentApp">
   <Id>a8abedf6-95b6-4b71-a417-6c4191a2a2cf</Id>
   <Version>1.0.0.1</Version>
-  <ProviderName>Microsoft</ProviderName>
+  <ProviderName>Office Concierge</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="(Local) Excel JSOM Test - Content"></DisplayName>
   <Description DefaultValue="(Local) Excel JSOM Test - Content"></Description>
