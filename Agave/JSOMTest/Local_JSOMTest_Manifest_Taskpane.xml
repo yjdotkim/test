@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
-  <Id>47f8b2a4-0e2a-4b5a-a011-b5253efdf14e</Id>
+  <Id>e55a33d2-60b6-4f65-9c2d-4e0980240b30</Id>
   <Version>1.0.0.1</Version>
-  <ProviderName>Office Concierge</ProviderName>
+  <ProviderName>Microsoft</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Excel JSOM Test - Taskpane"></DisplayName>
-  <Description DefaultValue="Excel JSOM Test - Taskpane"></Description>
-  <IconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconNormal.png"></IconUrl>
-  <HighResolutionIconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconHigh.png" />
+  <DisplayName DefaultValue="(Local) Excel JSOM Test - Taskpane"></DisplayName>
+  <Description DefaultValue="(Local) Excel JSOM Test - Taskpane"></Description>
+  <IconUrl DefaultValue="http://localhost/placeholder_logo.jpg"></IconUrl>
   <SupportUrl DefaultValue="https://github.com/yjdotkim/test" />
   <Hosts>
     <Host Name="Workbook"></Host>
@@ -18,7 +17,8 @@
     </Sets>
   </Requirements>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/JSOMTest.html"></SourceLocation>
+    <!-- <SourceLocation DefaultValue="http://localhost:10010/JSOMTest.html"></SourceLocation> -->
+    <SourceLocation DefaultValue="http://yongjkim-dev0:10010/JSOMTest.html"></SourceLocation>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
 
@@ -100,13 +100,13 @@
       </bt:Images> 
 
       <bt:Urls> 
-        <bt:Url id="JSOMTest.Taskpane.Url" DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/JSOMTest.html" />
+        <bt:Url id="JSOMTest.Taskpane.Url" DefaultValue="http://yongjkim-dev0:10010/JSOMTest.html" />
         <bt:Url id="JSOMTest.GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812" /> 
       </bt:Urls> 
 
       <!-- ShortStrings max characters==125. --> 
       <bt:ShortStrings> 
-        <bt:String id="JSOMTest.TaskpaneButton.Label" DefaultValue="Show JSOMTest Taskpane" /> 
+        <bt:String id="JSOMTest.TaskpaneButton.Label" DefaultValue="(Local) Show JSOMTest Taskpane" /> 
         <bt:String id="JSOMTest.Group1Label" DefaultValue="JSOMTest Group" />
         <bt:String id="JSOMTest.GetStarted.Title" DefaultValue="Get started with your JSOMTest add-in!" /> 
         <bt:String id="namespace" DefaultValue="JSOMTest" />
@@ -120,5 +120,5 @@
     </Resources> 
   </VersionOverrides>
 
-  <!-- End Add-in Commands Mode integration. --> 
+  <!-- End Add-in Commands Mode integration. -->
 </OfficeApp>

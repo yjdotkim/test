@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ContentApp">
-  <Id>8e80cea6-baa3-4d2e-9fd1-54d216bd608a</Id>
+  <Id>a8abedf6-95b6-4b71-a417-6c4191a2a2cf</Id>
   <Version>1.0.0.1</Version>
-  <ProviderName>Office Concierge</ProviderName>
+  <ProviderName>Microsoft</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Excel JSOM Test - Content"></DisplayName>
-  <Description DefaultValue="Excel JSOM Test - Content"></Description>
-  <IconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconNormal.png"></IconUrl>
-  <HighResolutionIconUrl DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/IconHigh.png" />
+  <DisplayName DefaultValue="(Local) Excel JSOM Test - Content"></DisplayName>
+  <Description DefaultValue="(Local) Excel JSOM Test - Content"></Description>
+  <IconUrl DefaultValue="http://localhost/placeholder_logo.jpg"></IconUrl>
   <SupportUrl DefaultValue="https://github.com/yjdotkim/test" />
   <Hosts>
     <Host Name="Workbook"></Host>
@@ -18,7 +17,8 @@
     </Sets>
   </Requirements>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://yjdotkim.github.io/test/Agave/JSOMTest/JSOMTest.html"></SourceLocation>
+    <!-- <SourceLocation DefaultValue="http://localhost:10010/JSOMTest.html"></SourceLocation> -->
+    <SourceLocation DefaultValue="http://yongjkim-dev0:10010/JSOMTest.html"></SourceLocation>
     <!--Only Incontent MOE can have both width and height-->
     <RequestedWidth>800</RequestedWidth>
     <RequestedHeight>800</RequestedHeight>
