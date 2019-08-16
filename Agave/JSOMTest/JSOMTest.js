@@ -23,14 +23,20 @@ values[5] = 'val1'; // AgaveSettingDelete_Succeed, CrossXlApiOsfTest::Coauth_Aga
 
 
 // ========== Init ==========
-Office.initialize = function (reason)
+Office.initialize = function(reason)
 {
+    output("Loading contents...");
+
     _Settings = Office.context.document.settings;
     _Bindings = Office.context.document.bindings;
     if (undefined === _Settings) 
     {
         return;
     }
+
+    registerSettingsChangedEventHandler();
+
+    output("Ready to use the app");
 }
 
 
@@ -259,6 +265,35 @@ function refreshSettings()
             }
         }
    );
+}
+
+// ========== Functions: Event Handlers ==========
+function registerSettingsChangedEventHandler()
+{
+    Excel.run(function(ctx) 
+    {
+        var settings = ctx.workbook.settings; 
+        settings.onSettingsChanged.add(handleSettingsChanged);
+        return ctx.sync()
+            .then(function()
+            {
+                output("Settings changed handler registered");
+            })
+            .catch(function(error)
+            {
+                output("Error: " + error);
+                if (error instanceof OfficeExtension.Error)
+                {
+                    output("Debug info: " + JSON.stringify(error.debugInfo));
+                }
+            });
+    });
+}
+
+function handleSettingsChanged(event)
+{
+    output("Event: SettingsChanged, calling refreshSettings()");
+    refreshSettings();
 }
 
 // ========== Functions: Misc ==========
