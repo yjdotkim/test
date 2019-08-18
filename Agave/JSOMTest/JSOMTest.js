@@ -13,8 +13,6 @@ var _bindingEventHandlers = [];
 
 
 // ========== Variables: Setting ==========
-var _Bindings;
-var _Settings;
 var names = ['StringSetting', 'StatusSetting', 'IntegerSetting', 'ArrayOfIntegersSetting'];
 var values = [];
 values[0] = 'This is a string value'; //string value
@@ -27,13 +25,6 @@ values[3] = [5, 8, 10, 100]; // array
 Office.onReady(function(info)
 {
     OfficeExtension.config.extendedErrorLogging = true;
-
-    _Settings = Office.context.document.settings;
-    _Bindings = Office.context.document.bindings;
-    if (undefined === _Settings) 
-    {
-        return;
-    }
 
     //registerSettingsChangedEventHandler();
     //registerBindingEventHandlersOnLoad();
@@ -271,40 +262,6 @@ function removeSetting()
     }).catch(function(error) { logError(error) });
 }
 
-function saveSettings()
-{
-    _Settings.saveAsync(
-        function (asyncResult)
-        {
-            if(asyncResult.status == Office.AsyncResultStatus.Failed)
-            {
-                output("Save settings failed with error = " + asyncResult.error.name + ":" + asyncResult.error.message);
-            }
-        else
-        {
-            output("Save settings complete");
-        }
-        }
-    );
-}
-
-function refreshSettings()
-{
-    _Settings.refreshAsync(
-        function (asyncResult)
-        {
-            if (asyncResult.status == Office.AsyncResultStatus.Failed)
-            {
-                output("Refresh settings failed with error = " + asyncResult.error.name + ":" + asyncResult.error.message);
-            }
-            else
-            {
-                output("Refresh settings complete");
-            }
-        }
-   );
-}
-
 // ========== Functions: Event Handlers ==========
 function registerSettingsChangedEventHandler()
 {
@@ -312,19 +269,16 @@ function registerSettingsChangedEventHandler()
     {
         var settings = ctx.workbook.settings; 
         settings.onSettingsChanged.add(handleSettingsChanged);
-        return ctx
-            .sync()
-            .then(function()
-            {
-                output("Settings changed event handler registered");
-            });
+        return ctx.sync().then(function()
+        {
+            output("Settings changed event handler registered");
+        });
     }).catch(function(error) { logError(error) });
 }
 
 function handleSettingsChanged(eventArgs)
 {
-    output("SettingsChanged Event - Calling refreshSettings()");
-//    refreshSettings();
+    output("SettingsChanged Event fired");
 }
 
 // NOT USED FOR NOW
@@ -382,7 +336,7 @@ function registerBindingEventHandler()
 function handleBindingDataChanged(eventArgs)
 {
     var binding = eventArgs.binding;
-    output("DataChange Event - BindingId: " + binding.id + ", BindingType: " + binding.type);
+    output("DataChange Event fired - BindingId: " + binding.id + ", BindingType: " + binding.type);
 }
 
 // ========== Functions: Misc ==========
