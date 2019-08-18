@@ -9,21 +9,18 @@ var result;
 
 // ========== Variables: Binding ==========
 var _bindingType;
-var _bindingObj;
 var _bindingEventHandlers = [];
 
 
 // ========== Variables: Setting ==========
 var _Bindings;
 var _Settings;
-var names = ['String', 'Status', 'Integer', 'Array of integers', 'key_update', 'key_delete'];
+var names = ['StringSetting', 'StatusSetting', 'IntegerSetting', 'ArrayOfIntegersSetting'];
 var values = [];
 values[0] = 'This is a string value'; //string value
 values[1] = true; //boolean value
 values[2] = 45; //number
-values[3] = [5, 8, 10, 100]; //array
-values[4] = 'val1'; // AgaveSettingUpdate_Succeed, CrossXlApiOsfTest::Coauth_AgaveSettingUpdate_Success
-values[5] = 'val1'; // AgaveSettingDelete_Succeed, CrossXlApiOsfTest::Coauth_AgaveSettingDelete_Success
+values[3] = [5, 8, 10, 100]; // array
 
 
 // ========== Init ==========
@@ -40,21 +37,8 @@ Office.onReady(function(info)
 
     //registerSettingsChangedEventHandler();
     //registerBindingEventHandlersOnLoad();
-    //displayCurrentTime();
+    displayCurrentTime();
 });
-
-function enableEvents()
-{
-    Excel.run(function(context)
-    {
-        context.runtime.load("enableEvents");
-        return context.sync().then(function()
-        {
-            context.runtime.enableEvents = true;
-            return context.sync();
-        });
-    });
-}
 
 // ========== Functions: Binding ==========
 function getBindingId()
@@ -85,33 +69,6 @@ function addBinding()
             output("Added new binding, id: " + bindingId + ", type: " + _bindingType);
         });
     }).catch(function(error) { logError(error); });
-
-    // _Bindings.addFromSelectionAsync(
-    //     _bindingType,
-    //     {
-    //         id: getBindingId()
-    //     },
-    //     function (asyncResult)
-    //     {
-    //         var statusString = "Status: " + asyncResult.status;
-    //         if (asyncResult.status != 'failed')
-    //         {
-    //             _bindingObj = asyncResult.value;
-    //             returnValueToAutomation(statusString + ", Id: " + _bindingObj.id + ", Type: " + _bindingObj.type);
-
-    //             // if (_bindingType != "Table")
-    //             // {
-    //             //     setBorderAroundSelectedRange();
-    //             // }
-    //         }
-    //         else
-    //         {
-    //             var _errorString = statusString + ", Name: " + asyncResult.error.name + ", Message: " + asyncResult.error.message;
-    //             returnValueToAutomation(_errorString);
-    //             _bindingObj = null;
-    //         }
-    //     }
-    // );
 }
 
 function removeBinding()
@@ -123,23 +80,18 @@ function removeBinding()
         return;
     }
 
-    _bindingObj = null;
-    _Bindings.releaseByIdAsync(
-        bindingId,
-        function (asyncResult)
+    Excel.run(function(ctx) 
+    {
+        var binding = ctx.workbook.bindings.getItem(bindingId);
+        return ctx.sync().then(function()
         {
-            var statusString = "Status: " + asyncResult.status;
-            if (asyncResult.status == 'failed')
+            binding.delete();
+            return ctx.sync().then(function()
             {
-                var _errorString = statusString + ", Name: " + asyncResult.error.name + ", Message: " + asyncResult.error.message;
-                returnValueToAutomation(_errorString);
-            }
-            else
-            {
-                returnValueToAutomation(statusString + ", Removed binding '" + bindingId + "'");
-            }
-        }
-    );
+                output("Removed binding, id: " + bindingId);
+            });
+        });
+    }).catch(function(error) { logError(error); });
 }
 
 function getBindingsCount()
@@ -201,7 +153,7 @@ function getBindingRange()
                 var text = binding.getText();
                 ctx.sync().then(function()
                 {
-                    output(text.value);
+                    output("id: " + bindingId + ", text: " + text.value);
                 });
             }
             else if (binding.type == "Range")
@@ -210,7 +162,7 @@ function getBindingRange()
                 bindingRange.load(['address', 'cellCount']);
                 return ctx.sync().then(function()
                 {
-                    output("Id: " + bindingId + ", address: " + bindingRange.address + ", cellCount: " + bindingRange.cellCount);
+                    output("id: " + bindingId + ", address: " + bindingRange.address + ", cellCount: " + bindingRange.cellCount);
                     var sheet = ctx.workbook.worksheets.getActiveWorksheet();
                     var range = sheet.getRange(bindingRange.address);
                     range.select();
@@ -224,7 +176,7 @@ function getBindingRange()
                 tableRange.load(['address', 'cellCount']);
                 return ctx.sync().then(function()
                 {
-                    output("Id: " + bindingId + ", address: " + tableRange.address + ", cellCount: " + tableRange.cellCount);
+                    output("id: " + bindingId + ", address: " + tableRange.address + ", cellCount: " + tableRange.cellCount);
                     tableRange.select();
                     return ctx.sync();
                 });
@@ -277,9 +229,9 @@ function getSettings()
     result = "";
     for (i = 0; i < names.length; i++)
     {
-        result = result + _Settings.get(names[i]) + "\n";
+        result = result + "id: " + names[i] + ", value: " + _Settings.get(names[i]) + "\n";
     }
-    output("Get settings returned : " + result);
+    output("Get settings returned : \r\n" + result);
 }
 
 function saveSettings()
@@ -351,7 +303,7 @@ function registerSettingsChangedEventHandler()
 
 function handleSettingsChanged(eventArgs)
 {
-    output("Event - SettingsChanged, calling refreshSettings()");
+    output("SettingsChanged Event - Calling refreshSettings()");
     refreshSettings();
 }
 
@@ -384,59 +336,27 @@ function registerBindingEventHandlersOnLoad()
 
 function registerBindingEventHandler()
 {
-    enableEvents();
-
-    // var bindingId = getBindingId();
-    // Excel.run(function(ctx) 
-    // {
-    //     var binding = ctx.workbook.bindings.getItem(bindingId);
-    //     binding.onDataChanged.add(handleBindingDataChanged);
-    //     return ctx.sync().then(function()
-    //     {
-    //         output("Binding DataChanged event handler registered, Id: " + bindingId);
-    //     });
-    // }).catch(function(error) { logError(error); });
-
-    var bindingId = getBindingId();
     Excel.run(function(ctx) 
     {
         var bindings = ctx.workbook.bindings;
         bindings.load('items');
         return ctx.sync().then(function()
         {
-            var binding = ctx.workbook.bindings.getItem(bindingId);
-            binding.onDataChanged.add(handleBindingDataChanged);
-            return ctx.sync().then(function()
+            var bindingId = getBindingId();
+            for (var i = 0; i < bindings.items.length; i++)
             {
-                output("Binding DataChanged event handler registered, Id: " + bindingId);
-            });
+                var binding = bindings.items[i];
+                if (binding.id == bindingId)
+                {
+                    var newEventHandler = binding.onDataChanged.add(handleBindingDataChanged);
+                    return ctx.sync().then(function()
+                    {
+                        output("Binding DataChanged handler registered, id: " + bindingId);
+                    });
+                }    
+            }
         });
     }).catch(function(error) { logError(error); });
-
-
-
-
-    // var bindingId = getBindingId();
-    // Excel.run(function(ctx) 
-    // {
-    //     var bindings = ctx.workbook.bindings;
-    //     bindings.load('items');
-    //     return ctx
-    //         .sync()
-    //         .then(function()
-    //         {
-    //             var binding = bindings.getItem(bindingId);
-    //             binding.onDataChanged.add(handleBindingDataChanged);
-    //             return ctx
-    //                 .sync()
-    //                 .then(function()
-    //                 {
-    //                     output("Binding DataChanged handler registered, Id: " + bindingId);
-    //                 })
-    //                 .catch(function(error) { logError(error) });
-    //         })
-    //         .catch(function(error) { logError(error); });
-    // });
 }
 
 function handleBindingDataChanged(eventArgs)
