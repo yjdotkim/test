@@ -47,11 +47,11 @@
     <div class="heading"><b>Settings</b></div>
     <input id="getSettingsId" type="button" onclick="javascript:getSettings()" value="Get settings"/>
     <input id="setSettingsId" type="button" onclick="javascript:setSettings()" value="Set settings"/>
-    <input id="removeSettingsId" type="button" onclick="javascript:removeSettings()" value="Remove settings"/>
-    <p />
-    <input id="saveSettingsId" type="button" onclick="javascript:saveSettings()" value="Save settings"/>
-    <input id="refreshSettingsId" type="button" onclick="javascript:refreshSettings()" value="Refresh settings"/>
     <input id="registerSettingsEventHandler" type="button" onclick="javascript:registerSettingsChangedEventHandler()" value="Register event handler"/>
+    <p />
+    <label for="settingKey">Setting Key</label>
+    <input type="text" id="settingKey"/>
+    <input id="removeSettingId" type="button" onclick="javascript:removeSetting()" value="Remove setting"/>
   </p>
 
   <br />

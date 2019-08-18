@@ -202,36 +202,73 @@ function returnValueToAutomation(res)
 
 
 // ========== Functions: Setting ==========
+function getSettingKey()
+{
+    return document.getElementById("settingKey").value;
+}
+
 function setSettings()
 {
-    if (undefined === _Settings) 
+    Excel.run(function(ctx) 
     {
-        output("Set settings failed");
-        return;
-    }
-
-    output("");
-    for (i = 0; i < names.length; i++)
-    {
-        _Settings.set(names[i], values[i]);
-    }
-    output("Set settings complete");
+        var settings = ctx.workbook.settings;
+        for (i = 0; i < names.length; i++)
+        {
+            settings.add(names[i], values[i]);
+        }
+        return ctx.sync().then(function()
+        {
+            output("Set settings with sample key/values");
+        });
+    }).catch(function(error) { logError(error) });
 }
 
 function getSettings()
 {
-    if (undefined === _Settings) 
+    Excel.run(function(ctx) 
     {
-        output("Get settings failed");
+        var settings = ctx.workbook.settings;
+        settings.load('items');
+        return ctx.sync().then(function()
+        {
+            var result = "";
+            var settingsCount = settings.items.length;
+            output("Settings count: " + settingsCount);
+            if (settingsCount > 0)
+            {
+                for (i = 0; i < settingsCount; i++)
+                {
+                    var setting = settings.items[i];
+                    result = result + "key: " + setting.key + ", value: " + setting.value + "\n";
+                }
+            }
+
+            output(result);
+        });
+    }).catch(function(error) { logError(error) });
+}
+
+function removeSetting()
+{
+    var key = getSettingKey();
+    if (!key || key.trim().length == 0)
+    {
+        output("Error: Need to specify setting key to remove");
         return;
     }
 
-    result = "";
-    for (i = 0; i < names.length; i++)
+    Excel.run(function(ctx)
     {
-        result = result + "id: " + names[i] + ", value: " + _Settings.get(names[i]) + "\n";
-    }
-    output("Get settings returned : \r\n" + result);
+        var setting = ctx.workbook.settings.getItem(key);
+        return ctx.sync().then(function()
+        {
+            setting.delete();
+            return ctx.sync().then(function()
+            {
+                output("Removed setting, key: " + key);
+            });
+        });
+    }).catch(function(error) { logError(error) });
 }
 
 function saveSettings()
@@ -249,23 +286,6 @@ function saveSettings()
         }
         }
     );
-}
-
-function removeSettings()
-{
-    if (undefined === _Settings) 
-    {
-        output("Remove settings failed");
-        return;
-    }
-
-    result = "";
-    for (i = 0; i < names.length; i++)
-    {
-        _Settings.remove(names[i]);
-        result = result + values[i] + "\n";
-    }
-    output("Removed elements : " + result);
 }
 
 function refreshSettings()
@@ -304,7 +324,7 @@ function registerSettingsChangedEventHandler()
 function handleSettingsChanged(eventArgs)
 {
     output("SettingsChanged Event - Calling refreshSettings()");
-    refreshSettings();
+//    refreshSettings();
 }
 
 // NOT USED FOR NOW
