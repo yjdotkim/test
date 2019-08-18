@@ -2,11 +2,15 @@
 // src\osftest\files\MOEs\JSOMSettings.js, \\daddev\Office\16.0\19104.12000\src\osftest\files\MOEs
 // JSOMEvents_ExcelIncontent.js
 
+// Reference docs
+// https://docs.microsoft.com/en-us/office/dev/add-ins/excel/excel-add-ins-advanced-concepts
+
 var result;
 
 // ========== Variables: Binding ==========
 var _bindingType;
 var _bindingObj;
+var _bindingEventHandlers = [];
 
 
 // ========== Variables: Setting ==========
@@ -23,9 +27,9 @@ values[5] = 'val1'; // AgaveSettingDelete_Succeed, CrossXlApiOsfTest::Coauth_Aga
 
 
 // ========== Init ==========
-Office.initialize = function(reason)
+Office.onReady(function(info)
 {
-    output("Loading contents...");
+    OfficeExtension.config.extendedErrorLogging = true;
 
     _Settings = Office.context.document.settings;
     _Bindings = Office.context.document.bindings;
@@ -34,11 +38,23 @@ Office.initialize = function(reason)
         return;
     }
 
-    registerSettingsChangedEventHandler();
+    //registerSettingsChangedEventHandler();
+    //registerBindingEventHandlersOnLoad();
+    //displayCurrentTime();
+});
 
-    output("Ready to use the app");
+function enableEvents()
+{
+    Excel.run(function(context)
+    {
+        context.runtime.load("enableEvents");
+        return context.sync().then(function()
+        {
+            context.runtime.enableEvents = true;
+            return context.sync();
+        });
+    });
 }
-
 
 // ========== Functions: Binding ==========
 function getBindingId()
@@ -61,27 +77,41 @@ function addBinding()
         return;
     }
 
-    _Bindings.addFromSelectionAsync(
-        _bindingType,
+    Excel.run(function(ctx) 
+    {
+        ctx.workbook.bindings.addFromSelection(_bindingType, bindingId);
+        return ctx.sync().then(function()
         {
-            id: getBindingId()
-        },
-        function (asyncResult)
-        {
-            var statusString = "Status: " + asyncResult.status;
-            if (asyncResult.status == 'failed')
-            {
-                var _errorString = statusString + ", Name: " + asyncResult.error.name + ", Message: " + asyncResult.error.message;
-                returnValueToAutomation(_errorString);
-                _bindingObj = null;
-            }
-            else
-            {
-                _bindingObj = asyncResult.value;
-                returnValueToAutomation(statusString + ", Id: " + _bindingObj.id + ", Type: " + _bindingObj.type);
-            }
-        }
-    );
+            output("Added new binding, id: " + bindingId + ", type: " + _bindingType);
+        });
+    }).catch(function(error) { logError(error); });
+
+    // _Bindings.addFromSelectionAsync(
+    //     _bindingType,
+    //     {
+    //         id: getBindingId()
+    //     },
+    //     function (asyncResult)
+    //     {
+    //         var statusString = "Status: " + asyncResult.status;
+    //         if (asyncResult.status != 'failed')
+    //         {
+    //             _bindingObj = asyncResult.value;
+    //             returnValueToAutomation(statusString + ", Id: " + _bindingObj.id + ", Type: " + _bindingObj.type);
+
+    //             // if (_bindingType != "Table")
+    //             // {
+    //             //     setBorderAroundSelectedRange();
+    //             // }
+    //         }
+    //         else
+    //         {
+    //             var _errorString = statusString + ", Name: " + asyncResult.error.name + ", Message: " + asyncResult.error.message;
+    //             returnValueToAutomation(_errorString);
+    //             _bindingObj = null;
+    //         }
+    //     }
+    // );
 }
 
 function removeBinding()
@@ -118,21 +148,15 @@ function getBindingsCount()
     {
         var bindings = ctx.workbook.bindings;
         bindings.load('count');
-        return ctx.sync()
-            .then(function()
-            {
-                output("Bindings count: " + bindings.count);
-                return bindings.count;
-            })
-            .catch(function(error)
-            {
-                output("Error: " + error);
-                if (error instanceof OfficeExtension.Error)
-                {
-                    output("Debug info: " + JSON.stringify(error.debugInfo));
-                }
-                return -1;
-            });
+        return ctx.sync().then(function()
+        {
+            output("Bindings count: " + bindings.count);
+            return bindings.count;
+        });
+    }).catch(function(error)
+    {
+        logError(error);
+        return -1;
     });
 }
 
@@ -140,30 +164,73 @@ function getBindingsInfo()
 {
     var outputString = "";
 
-    Excel.run(function(ctx) 
+    Excel.run(function(ctx)
     {
         var bindings = ctx.workbook.bindings;
         bindings.load('items');
         return ctx.sync().then(function()
         {
-            outputString = "Count: " + bindings.items.length + ", "
             for (var i = 0; i < bindings.items.length; i++)
             {
                 var binding = bindings.items[i];
-                outputString = outputString + "{ Id: " + binding.id + ", Type: " + binding.type + " } ";
+                outputString = outputString + "{ Id: " + binding.id + ", Type: " + binding.type + " }" + "\r\n";
             }
+
             output(outputString);
-        })
-        .catch(function(error)
-        {
-            output("Error: " + error);
-            if (error instanceof OfficeExtension.Error)
-            {
-                output("Debug info: " + JSON.stringify(error.debugInfo));
-            }
-            return -1;
         });
-    });
+    }).catch(function(error) { logError(error); });
+}
+
+function getBindingRange()
+{
+    var bindingId = getBindingId();
+    if (!bindingId || bindingId.trim().length == 0)
+    {
+        output("Error: Need to specify binding id");
+        return;
+    }
+
+    Excel.run(function(ctx) 
+    {
+        var binding = ctx.workbook.bindings.getItem(bindingId);
+        binding.load("type, text");
+        return ctx.sync().then(function()
+        {
+            if (binding.type == "Text")
+            {
+                var text = binding.getText();
+                ctx.sync().then(function()
+                {
+                    output(text.value);
+                });
+            }
+            else if (binding.type == "Range")
+            {
+                var bindingRange = binding.getRange();
+                bindingRange.load(['address', 'cellCount']);
+                return ctx.sync().then(function()
+                {
+                    output("Id: " + bindingId + ", address: " + bindingRange.address + ", cellCount: " + bindingRange.cellCount);
+                    var sheet = ctx.workbook.worksheets.getActiveWorksheet();
+                    var range = sheet.getRange(bindingRange.address);
+                    range.select();
+                    return ctx.sync();
+                });
+            }
+            else
+            {
+                var table = binding.getTable();
+                var tableRange = table.getRange();
+                tableRange.load(['address', 'cellCount']);
+                return ctx.sync().then(function()
+                {
+                    output("Id: " + bindingId + ", address: " + tableRange.address + ", cellCount: " + tableRange.cellCount);
+                    tableRange.select();
+                    return ctx.sync();
+                });
+            }
+        });
+    }).catch(function(error) { logError(error); });
 }
 
 function returnValueToAutomation(res)
@@ -179,7 +246,6 @@ function returnValueToAutomation(res)
         output(res);
     }
 }
-
 
 
 
@@ -274,26 +340,109 @@ function registerSettingsChangedEventHandler()
     {
         var settings = ctx.workbook.settings; 
         settings.onSettingsChanged.add(handleSettingsChanged);
-        return ctx.sync()
+        return ctx
+            .sync()
             .then(function()
             {
-                output("Settings changed handler registered");
-            })
-            .catch(function(error)
-            {
-                output("Error: " + error);
-                if (error instanceof OfficeExtension.Error)
-                {
-                    output("Debug info: " + JSON.stringify(error.debugInfo));
-                }
+                output("Settings changed event handler registered");
             });
-    });
+    }).catch(function(error) { logError(error) });
 }
 
-function handleSettingsChanged(event)
+function handleSettingsChanged(eventArgs)
 {
-    output("Event: SettingsChanged, calling refreshSettings()");
+    output("Event - SettingsChanged, calling refreshSettings()");
     refreshSettings();
+}
+
+// NOT USED FOR NOW
+function registerBindingEventHandlersOnLoad()
+{
+    // TODO: Is this right?
+    // TODO: Remove existing event handlers
+    Excel.run(function(ctx) 
+    {
+        var bindings = ctx.workbook.bindings;
+        bindings.load('items');
+        return ctx.sync().then(function()
+        {
+            // Register event handlers
+            for (var i = 0; i < bindings.items.length; i++)
+            {
+                var newEventHandler = bindings.items[i].onDataChanged.add(handleBindingDataChanged);
+                _bindingEventHandlers.push(newEventHandler);
+            }
+
+            output("Registering binding event handlers... count: " + bindings.items.length);
+            return ctx.sync().then(function()
+            {
+                output("Binding DataChanged handler registered");
+            });
+        });
+    }).catch(function(error) { logError(error); });
+}
+
+function registerBindingEventHandler()
+{
+    enableEvents();
+
+    // var bindingId = getBindingId();
+    // Excel.run(function(ctx) 
+    // {
+    //     var binding = ctx.workbook.bindings.getItem(bindingId);
+    //     binding.onDataChanged.add(handleBindingDataChanged);
+    //     return ctx.sync().then(function()
+    //     {
+    //         output("Binding DataChanged event handler registered, Id: " + bindingId);
+    //     });
+    // }).catch(function(error) { logError(error); });
+
+    var bindingId = getBindingId();
+    Excel.run(function(ctx) 
+    {
+        var bindings = ctx.workbook.bindings;
+        bindings.load('items');
+        return ctx.sync().then(function()
+        {
+            var binding = ctx.workbook.bindings.getItem(bindingId);
+            binding.onDataChanged.add(handleBindingDataChanged);
+            return ctx.sync().then(function()
+            {
+                output("Binding DataChanged event handler registered, Id: " + bindingId);
+            });
+        });
+    }).catch(function(error) { logError(error); });
+
+
+
+
+    // var bindingId = getBindingId();
+    // Excel.run(function(ctx) 
+    // {
+    //     var bindings = ctx.workbook.bindings;
+    //     bindings.load('items');
+    //     return ctx
+    //         .sync()
+    //         .then(function()
+    //         {
+    //             var binding = bindings.getItem(bindingId);
+    //             binding.onDataChanged.add(handleBindingDataChanged);
+    //             return ctx
+    //                 .sync()
+    //                 .then(function()
+    //                 {
+    //                     output("Binding DataChanged handler registered, Id: " + bindingId);
+    //                 })
+    //                 .catch(function(error) { logError(error) });
+    //         })
+    //         .catch(function(error) { logError(error); });
+    // });
+}
+
+function handleBindingDataChanged(eventArgs)
+{
+    var binding = eventArgs.binding;
+    output("DataChange Event - BindingId: " + binding.id + ", BindingType: " + binding.type);
 }
 
 // ========== Functions: Misc ==========
@@ -306,6 +455,15 @@ function output(str)
     logsArea.value = getTimestamp() + " - " + str + "\n" + logsArea.value;
 }
 
+function logError(error)
+{
+    output("Error: " + error);
+    if (error instanceof OfficeExtension.Error)
+    {
+        output("Debug info: " + JSON.stringify(error.debugInfo));
+    }
+}
+
 function getTimestamp()
 {
     var dt = new Date(Date.now());
@@ -314,4 +472,28 @@ function getTimestamp()
     var seconds = "0" + dt.getSeconds();
 
     return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+}
+
+function displayCurrentTime()
+{
+    var dt = getTimestamp();
+    document.getElementById('currentDatetimeDiv').innerHTML = dt;
+    var nextDt = setTimeout(displayCurrentTime, 1000);
+}
+
+function setBorderAroundSelectedRange()
+{
+    Excel.run(function (ctx)
+    {
+        var range = ctx.workbook.getSelectedRange();
+        range.format.borders.getItem('EdgeBottom').style = 'Continuous';
+        range.format.borders.getItem('EdgeBottom').weight = 'Thick';
+        range.format.borders.getItem('EdgeLeft').style = 'Continuous';
+        range.format.borders.getItem('EdgeLeft').weight = 'Thick';
+        range.format.borders.getItem('EdgeRight').style = 'Continuous';
+        range.format.borders.getItem('EdgeRight').weight = 'Thick';
+        range.format.borders.getItem('EdgeTop').style = 'Continuous';
+        range.format.borders.getItem('EdgeTop').weight = 'Thick';
+        return ctx.sync(); 
+    }).catch(function(error) { logError(error); });
 }

@@ -33,21 +33,25 @@
           <label for="bindingId">Binding Id</label>
           <input type="text" id="bindingId"/>
       </div>
-      <input id="bindToSelection" type="button" onclick="javascript:addBinding()" value="Add a binding to selection"/>
-      <input id="removeBinding" type="button" onclick="javascript:removeBinding()" value="Remove the binding"/>
+      <input id="bindToSelection" type="button" onclick="javascript:addBinding()" value="Add binding from selection"/>
+      <input id="removeBinding" type="button" onclick="javascript:removeBinding()" value="Remove binding"/>
+      <input id="registerBindingEventHandler" type="button" onclick="javascript:registerBindingEventHandler()" value="Register event handler"/>
       <p />
       <input id="getBindingsCount" type="button" onclick="javascript:getBindingsCount()" value="Bindings count"/>
       <input id="getBindingsInfo" type="button" onclick="javascript:getBindingsInfo()" value="Bindings info"/>
+      <input id="getBindingRange" type="button" onclick="javascript:getBindingRange()" value="Get binding text/range"/>
   </p>
 
   <br />
   <p>
     <div class="heading"><b>Settings</b></div>
-    <input id="setSettingsId" type="button" onclick="javascript:setSettings()" value="Set settings"/>
     <input id="getSettingsId" type="button" onclick="javascript:getSettings()" value="Get settings"/>
-    <input id="saveSettingsId" type="button"  onclick="javascript:saveSettings()" value="Save settings"/>
-    <input id="refreshSettingsId" type="button"  onclick="javascript:refreshSettings()" value="Refresh settings"/>
-    <input id="removeSettingsId" type="button"  onclick="javascript:removeSettings()" value="Remove settings"/>
+    <input id="setSettingsId" type="button" onclick="javascript:setSettings()" value="Set settings"/>
+    <input id="removeSettingsId" type="button" onclick="javascript:removeSettings()" value="Remove settings"/>
+    <p />
+    <input id="saveSettingsId" type="button" onclick="javascript:saveSettings()" value="Save settings"/>
+    <input id="refreshSettingsId" type="button" onclick="javascript:refreshSettings()" value="Refresh settings"/>
+    <input id="registerSettingsEventHandler" type="button" onclick="javascript:registerSettingsChangedEventHandler()" value="Register event handler"/>
   </p>
 
   <br />
@@ -55,6 +59,7 @@
     <div class="heading"><b>Output</b></div>
     <textarea rows="5" cols="80" id="output"></textarea>
   </p>
+  <div id='currentDatetimeDiv'></div>
   <p>
     <div class="heading"><b>Logs</b></div>
     <textarea rows="10" cols="80" id="logs"></textarea>
